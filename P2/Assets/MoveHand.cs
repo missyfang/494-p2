@@ -14,6 +14,7 @@ public class MoveHand : MonoBehaviour
     private bool isMoving = false;
     private Rigidbody rb;
     private GameObject hand;
+    private LineRenderer lineRenderer;
 
     [SerializeField]
     float timeToMove;
@@ -52,8 +53,24 @@ public class MoveHand : MonoBehaviour
         }
     }
 
+    //private void Draw()
+    //{
+    //    //For creating line renderer object
+    //    lineRenderer = new GameObject("Line").AddComponent<LineRenderer>();
+    //    lineRenderer.startColor = Color.black;
+    //    lineRenderer.endColor = Color.black;
+    //    lineRenderer.startWidth = 0.01f;
+    //    lineRenderer.endWidth = 0.01f;
+    //    lineRenderer.positionCount = 2;
+    //    lineRenderer.useWorldSpace = true;
 
-    // Move Hand to position
+    //    //For drawing line in the world space, provide the x,y,z values
+    //    lineRenderer.SetPosition(0, transform.position); //x,y and z position of the starting point of the line
+    //    lineRenderer.SetPosition(1, hand.transform.position); //x,y and z position of the end point of the line
+
+    //}
+
+    // Move Hand to mouse click position
     private IEnumerator Move()
     {
         isMoving = true;
@@ -72,7 +89,7 @@ public class MoveHand : MonoBehaviour
         isMoving = false;
     }
 
-    // Move hand as close to position as allowed
+    // Move hand as close to pmouse click osition as allowed
     private IEnumerator FailMove()
     {
         isMoving = true;
