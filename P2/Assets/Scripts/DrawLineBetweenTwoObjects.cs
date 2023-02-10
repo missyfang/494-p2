@@ -29,7 +29,6 @@ public class DrawLineBetweenTwoObjects : MonoBehaviour
     void DrawLineBetweenObjects(Vector3 firstPos, Vector3 secondPos)
     {
         // Set the positions of the LineRenderer
-        Debug.Log("drawing");
         lineRenderer.SetPosition(0, firstPos);
         lineRenderer.SetPosition(1, secondPos);
     }

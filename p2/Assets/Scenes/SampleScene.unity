@@ -233,6 +233,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 72994b0219af84544a9ff8cc6de1448e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  MaxDistanceBetweenHeadandHand: 1.5
+  timeToMove: 2
+  rightHand: {fileID: 489713302}
+  leftHand: {fileID: 982641916}
 --- !u!1 &489713302
 GameObject:
   m_ObjectHideFlags: 0
@@ -1342,6 +1346,7 @@ MonoBehaviour:
   pushStrength: 0.5
   left: {fileID: 982641916}
   right: {fileID: 489713302}
+  head: {fileID: 0}
 --- !u!1 &1508001574
 GameObject:
   m_ObjectHideFlags: 0

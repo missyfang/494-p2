@@ -26,6 +26,8 @@ public class MoveHand : MonoBehaviour
     GameObject left;
     [SerializeField]
     GameObject right;
+    [SerializeField]
+    GameObject head;
 
 
     void Update()
@@ -90,13 +92,13 @@ public class MoveHand : MonoBehaviour
             rb.AddForce(dir.normalized * pushStrength);
             yield return null; 
         }
-        //Vector3 failPos = new Vector3()
-        //while (Vector3.Distance(hand.transform.position, orgPos) < maxReachDistance)
-        //{
-        //    //Translate the object in the direction of the vector
-        //    rb.AddForce(dir.normalized * pushStrength);
-        //    yield return null;
-        //}
+        dir = orgPos - hand.transform.position;
+        while (Vector3.Distance(hand.transform.position, head.transform.position) < maxReachDistance)
+        {
+            //Translate the object in the direction of the vector
+            rb.AddForce(dir.normalized * pushStrength);
+            yield return null;
+        }
         rb.velocity = Vector3.zero;
         isMoving = false;
     }
