@@ -34,7 +34,8 @@ public class MoveHand : MonoBehaviour
         if (Input.GetMouseButtonDown(0))
         {
             mousePos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-            // determin closer hand
+
+            // determin closer the hand
             if (Vector3.Distance(left.transform.position, mousePos) < Vector3.Distance(right.transform.position, mousePos))
                 hand = left;
             else
@@ -43,6 +44,7 @@ public class MoveHand : MonoBehaviour
             if (!isMoving)
             {
                 targPos = new Vector3(mousePos.x, mousePos.y, 0);
+                // Check if reach is too far
                 if (Vector3.Distance(hand.transform.position, targPos) > maxReachDistance)
                 {
                     StartCoroutine(FailMove());
@@ -53,22 +55,6 @@ public class MoveHand : MonoBehaviour
         }
     }
 
-    //private void Draw()
-    //{
-    //    //For creating line renderer object
-    //    lineRenderer = new GameObject("Line").AddComponent<LineRenderer>();
-    //    lineRenderer.startColor = Color.black;
-    //    lineRenderer.endColor = Color.black;
-    //    lineRenderer.startWidth = 0.01f;
-    //    lineRenderer.endWidth = 0.01f;
-    //    lineRenderer.positionCount = 2;
-    //    lineRenderer.useWorldSpace = true;
-
-    //    //For drawing line in the world space, provide the x,y,z values
-    //    lineRenderer.SetPosition(0, transform.position); //x,y and z position of the starting point of the line
-    //    lineRenderer.SetPosition(1, hand.transform.position); //x,y and z position of the end point of the line
-
-    //}
 
     // Move Hand to mouse click position
     private IEnumerator Move()
@@ -85,11 +71,12 @@ public class MoveHand : MonoBehaviour
         }
         hand.transform.position = targPos;
 
+        EventBus.Publish<SuccessfulGrab>(new SuccessfulGrab(hand));
 
         isMoving = false;
     }
 
-    // Move hand as close to pmouse click osition as allowed
+    // Move hand as close to mouse click osition as allowed
     private IEnumerator FailMove()
     {
         isMoving = true;
@@ -103,7 +90,23 @@ public class MoveHand : MonoBehaviour
             rb.AddForce(dir.normalized * pushStrength);
             yield return null; 
         }
+        //Vector3 failPos = new Vector3()
+        //while (Vector3.Distance(hand.transform.position, orgPos) < maxReachDistance)
+        //{
+        //    //Translate the object in the direction of the vector
+        //    rb.AddForce(dir.normalized * pushStrength);
+        //    yield return null;
+        //}
         rb.velocity = Vector3.zero;
         isMoving = false;
     }
+
+
+}
+
+public class SuccessfulGrab
+{
+    public GameObject successfulHandGo;
+    public SuccessfulGrab(GameObject _successfulHandGo) { successfulHandGo = _successfulHandGo; }
+
 }

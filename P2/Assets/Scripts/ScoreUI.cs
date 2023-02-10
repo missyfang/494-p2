@@ -2,10 +2,14 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using TMPro;
 
 public class ScoreUI : MonoBehaviour
 {
     Subscription<ScoreEvent> score_event_subscription;
+    [SerializeField]
+    TextMeshProUGUI checkPointText;
+
 
     void Start()
     {
@@ -14,7 +18,7 @@ public class ScoreUI : MonoBehaviour
 
     void _OnScoreUpdated(ScoreEvent e)
     {
-        GetComponent<Text>().text = "Score : " + e.new_score;
+        checkPointText.text = "Checkpoints : " + e.new_score;
     }
 
     private void OnDestroy()
