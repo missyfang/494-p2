@@ -18,7 +18,7 @@ public class ScoreUI : MonoBehaviour
 
     void _OnScoreUpdated(ScoreEvent e)
     {
-        checkPointText.text = "Checkpoints : " + e.new_score;
+        checkPointText.text = "Routes Completed : " + e.new_score;
     }
 
     private void OnDestroy()
