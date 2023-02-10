@@ -14,7 +14,9 @@ public class MoveHand : MonoBehaviour
     private bool isMoving = false;
     private Rigidbody rb;
     private GameObject hand;
-    private LineRenderer lineRenderer;
+    private float alternateIndex = 1;
+    private GameObject[] validRockGos;
+    private string validRockTag = "v1";
 
     [SerializeField]
     float timeToMove;
@@ -29,31 +31,35 @@ public class MoveHand : MonoBehaviour
     [SerializeField]
     GameObject head;
 
-
     void Update()
     {
         // On mouse click
-        if (Input.GetMouseButtonDown(0))
+        if (Input.GetMouseButtonDown(0) && !isMoving)
         {
             mousePos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
 
-            // determin closer the hand
-            if (Vector3.Distance(left.transform.position, mousePos) < Vector3.Distance(right.transform.position, mousePos))
+            // Alternate between hands
+            if (alternateIndex > 0)
                 hand = left;
             else
                 hand = right;
 
+            alternateIndex *= -1;
+
             if (!isMoving)
             {
+                // Zero the z of target pos. 
                 targPos = new Vector3(mousePos.x, mousePos.y, 0);
+
                 // Check if reach is too far
-                if (Vector3.Distance(hand.transform.position, targPos) > maxReachDistance)
+                if (Vector3.Distance(head.transform.position, targPos) > maxReachDistance)
                 {
                     StartCoroutine(FailMove());
                 }
                 else
                     StartCoroutine(Move());
             }
+           
         }
     }
 
@@ -65,6 +71,7 @@ public class MoveHand : MonoBehaviour
         float elapsedTime = 0;
         orgPos = hand.transform.position;
 
+        // Move hand to target
         while (elapsedTime < timeToMove)
         {
             hand.transform.position = Vector3.Lerp(orgPos, targPos, (elapsedTime / timeToMove));
@@ -73,38 +80,89 @@ public class MoveHand : MonoBehaviour
         }
         hand.transform.position = targPos;
 
-        EventBus.Publish<SuccessfulGrab>(new SuccessfulGrab(hand));
+        // Publish event if grab valid rock 
+        if (IsValidRock())
+        {
+            EventBus.Publish<SuccessfulGrab>(new SuccessfulGrab(hand));
+            isMoving = false;
+        }
+        // Did not grab valid rock
+        else
+            StartCoroutine(HandFall());
 
-        isMoving = false;
+      
     }
 
     // Move hand as close to mouse click osition as allowed
     private IEnumerator FailMove()
     {
         isMoving = true;
-        //Calculate the vector between the object and the player
-        Vector3 dir = mousePos - hand.transform.position;
+        float elapsedTime = 0;
+
+        // Calculate the vector between the mouse position and hand
+        Vector3 dir = (mousePos - hand.transform.position).normalized;
         orgPos = hand.transform.position;
-        rb = hand.GetComponent<Rigidbody>();
-        while (Vector3.Distance(hand.transform.position, orgPos) < maxReachDistance)
+        targPos = head.transform.position + (dir * maxReachDistance);
+        targPos.z = 0;
+
+        // Hand move up
+        while (elapsedTime < timeToMove)
         {
-            //Translate the object in the direction of the vector
-            rb.AddForce(dir.normalized * pushStrength);
-            yield return null; 
-        }
-        dir = orgPos - hand.transform.position;
-        while (Vector3.Distance(hand.transform.position, head.transform.position) < maxReachDistance)
-        {
-            //Translate the object in the direction of the vector
-            rb.AddForce(dir.normalized * pushStrength);
+            hand.transform.position = Vector3.Lerp(orgPos, targPos, (elapsedTime / timeToMove));
+            elapsedTime += Time.deltaTime;
             yield return null;
         }
-        rb.velocity = Vector3.zero;
-        isMoving = false;
+        hand.transform.position = targPos;
+
+        // Pause
+        yield return new WaitForSeconds(0.1f);
+
+        // Hand falls below head
+        StartCoroutine(HandFall());
+        
+       
     }
 
 
+    // Move hand to postion below head. 
+    private IEnumerator HandFall()
+    {
+        // Calculate the opposite vector between the mouse position and hand
+        rb = hand.GetComponent<Rigidbody>();
+        targPos = head.transform.position;
+        targPos.z = 0;
+        targPos.y = targPos.y - 2.0f;
+        Vector3 dir = targPos - hand.transform.position;
+        Debug.Log("this is the target" + targPos);
+        // Hand fall down
+
+        while (Vector3.Distance(hand.transform.position, targPos) > 0.1f)
+        {
+            rb.AddForce(dir.normalized * pushStrength, ForceMode.Force);
+            yield return null;
+        }
+        
+        rb.velocity = Vector3.zero;
+        hand.transform.position = targPos;
+
+        // Change alternating to use failed hand on next grab.
+        alternateIndex *= -1;
+        isMoving = false;
+    }
+
+    // Check if hand is at the same position as a valid rock
+    private bool IsValidRock()
+    {
+        validRockGos = GameObject.FindGameObjectsWithTag(validRockTag);
+        foreach(GameObject rock in validRockGos){
+            if (Vector3.Distance(hand.transform.position, rock.transform.position) < 0.25f)
+                return true;
+        }
+        return false;
+    }
+
 }
+
 
 public class SuccessfulGrab
 {
