@@ -5,7 +5,7 @@ using UnityEngine;
 public class MoveCamera : MonoBehaviour
 {
     Subscription<PlayerHitBottomEvent> player_hit_bottom_event_sub;
-    Subscription<StartCameraMovement> start_camera_movement_event_sub;
+    Subscription<StartCameraMovementEvent> start_camera_movement_event_sub;
 
     float upSpeed = 0.5f;
     bool shouldMoveCamera;
@@ -13,10 +13,10 @@ public class MoveCamera : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        shouldMoveCamera = true;
+        shouldMoveCamera = false;
 
         player_hit_bottom_event_sub = EventBus.Subscribe<PlayerHitBottomEvent>(_OnPlayerHitBottom);
-       // start_camera_movement_event_sub = EventBus.Subscribe<StartCameraMovement>(_OnStartCameraMovement);
+        start_camera_movement_event_sub = EventBus.Subscribe<StartCameraMovementEvent>(_OnStartCameraMovement);
 
     }
 
@@ -24,7 +24,6 @@ public class MoveCamera : MonoBehaviour
     void Update()
     {
        
-
         if (!shouldMoveCamera)
             return;
 
@@ -40,7 +39,7 @@ public class MoveCamera : MonoBehaviour
 
     }
 
-    void _OnStartCameraMovement(StartCameraMovement e)
+    void _OnStartCameraMovement(StartCameraMovementEvent e)
     {
         Debug.Log("move camera bitch");
         shouldMoveCamera = true;

@@ -16,7 +16,7 @@ public class MoveHand : MonoBehaviour
     private GameObject hand;
     private float alternateIndex = 1;
     private GameObject[] validRockGos;
-    private string validRockTag = "v1";
+    private string validRockTag;
 
     [SerializeField]
     float timeToMove;
@@ -33,6 +33,10 @@ public class MoveHand : MonoBehaviour
 
     void Update()
     {
+        validRockTag = "V" + PlayerInfo.Instance.Level.ToString();
+
+        if (PlayerInfo.Instance.disableMovement == true)
+            return;
         // On mouse click
         if (Input.GetMouseButtonDown(0) && !isMoving)
         {
@@ -153,11 +157,20 @@ public class MoveHand : MonoBehaviour
     // Check if hand is at the same position as a valid rock
     private bool IsValidRock()
     {
+        // Valid level rocks
         validRockGos = GameObject.FindGameObjectsWithTag(validRockTag);
         foreach(GameObject rock in validRockGos){
             if (Vector3.Distance(hand.transform.position, rock.transform.position) < 0.25f)
                 return true;
         }
+        // Check point rocks
+        validRockGos = GameObject.FindGameObjectsWithTag("CheckPoint");
+        foreach (GameObject rock in validRockGos)
+        {
+            if (Vector3.Distance(hand.transform.position, rock.transform.position) < 0.25f)
+                return true;
+        }
+
         return false;
     }
 

@@ -5,9 +5,13 @@ using UnityEngine;
 public class ScorePointOnTouch : MonoBehaviour
 {
     static int total_score = 0;
+    bool hasBeenTouched = false; 
 
     void OnTriggerEnter(Collider other)
     {
+        if (hasBeenTouched)
+            return;
+        hasBeenTouched = true;
         total_score++;
         EventBus.Publish<ScoreEvent>(new ScoreEvent(total_score));    
     }
