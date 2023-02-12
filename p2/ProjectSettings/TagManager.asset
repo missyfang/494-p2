@@ -8,6 +8,7 @@ TagManager:
   - V1
   - V0
   - CheckPoint
+  - Bad
   layers:
   - Default
   - TransparentFX

@@ -18,6 +18,13 @@ public class MoveHand : MonoBehaviour
     private GameObject[] validRockGos;
     private string validRockTag;
 
+
+    [SerializeField]
+    float flashDuration;
+    [SerializeField]
+    Material flashMaterial;
+    [SerializeField]
+    Material originalMaterial;
     [SerializeField]
     float timeToMove;
     [SerializeField]
@@ -139,7 +146,6 @@ public class MoveHand : MonoBehaviour
         Vector3 dir = targPos - hand.transform.position;
         Debug.Log("this is the target" + targPos);
         // Hand fall down
-
         while (Vector3.Distance(hand.transform.position, targPos) > 0.1f)
         {
             rb.AddForce(dir.normalized * pushStrength, ForceMode.Force);
@@ -171,7 +177,33 @@ public class MoveHand : MonoBehaviour
                 return true;
         }
 
+        // Check bad racks
+        validRockGos = GameObject.FindGameObjectsWithTag("Bad");
+        foreach (GameObject rock in validRockGos)
+        {
+            if (Vector3.Distance(hand.transform.position, rock.transform.position) < 0.25f)
+                StartCoroutine(DamageEffect());
+        }
+
         return false;
+    }
+
+    // flash red and freeze when try to grab red rock. 
+    IEnumerator DamageEffect()
+    {
+        PlayerInfo.Instance.disableMovement = true;
+        // Flash
+        for (int i = 0; i < 5; i++)
+        {
+            head.GetComponent<Renderer>().material = flashMaterial;
+            yield return new WaitForSeconds(flashDuration);
+
+            head.GetComponent<Renderer>().material = originalMaterial;
+            yield return new WaitForSeconds(flashDuration);
+        }
+
+        PlayerInfo.Instance.disableMovement = false;
+
     }
 
 }

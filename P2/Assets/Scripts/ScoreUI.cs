@@ -26,7 +26,7 @@ public class ScoreUI : MonoBehaviour
 
     void _OnScoreUpdated(ScoreEvent e)
     {
-        scoreText.text = "Routes Completed : " + e.new_score;
+        scoreText.text = "Rocks : " + e.new_score;
     }
 
     void _OnLevelUp(LevelUpEvent e)
