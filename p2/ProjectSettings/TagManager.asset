@@ -4,12 +4,12 @@
 TagManager:
   serializedVersion: 2
   tags:
-  - v1
   - V1
   - V0
   - CheckPoint
   - Bad
   - V2
+  - FallingRock
   layers:
   - Default
   - TransparentFX
