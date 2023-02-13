@@ -8,10 +8,13 @@ public class ScoreUI : MonoBehaviour
 {
     Subscription<ScoreEvent> score_event_subscription;
     Subscription<LevelUpEvent> level_up_event_subscription;
+    Subscription<PlayerHitBottomEvent> player_hit_bottom_event_sub;
     [SerializeField]
     TextMeshProUGUI scoreText;
     [SerializeField]
-    GameObject NotifcationText;
+    GameObject NotifcationGo;
+    [SerializeField]
+    GameObject DeathGo;
     [SerializeField]
     float timeToMove;
     [SerializeField]
@@ -19,22 +22,32 @@ public class ScoreUI : MonoBehaviour
 
     void Start()
     {
+        DeathGo.SetActive(false);
         score_event_subscription = EventBus.Subscribe<ScoreEvent>(_OnScoreUpdated);
         level_up_event_subscription = EventBus.Subscribe<LevelUpEvent>(_OnLevelUp);
-        StartCoroutine(Move());
+        player_hit_bottom_event_sub = EventBus.Subscribe<PlayerHitBottomEvent>(_OnPlayerHitBottomEvent);
+        StartCoroutine(MoveLevelNotification());
     }
 
+    // Count good rocks grabs
     void _OnScoreUpdated(ScoreEvent e)
     {
         scoreText.text = "Rocks : " + e.new_score;
     }
 
+    // Notify player they moved up a level
     void _OnLevelUp(LevelUpEvent e)
     {
-        NotifcationText.GetComponentInChildren<TextMeshProUGUI>().text ="Level Up! " + e.level;
+        NotifcationGo.GetComponentInChildren<TextMeshProUGUI>().text ="Level Up! " + e.level;
         Debug.Log(e.level);
-        NotifcationText.GetComponent<Image>().color = PlayerInfo.Instance.LevelToColor[e.level];
-        StartCoroutine(Move());
+        NotifcationGo.GetComponent<Image>().color = PlayerInfo.Instance.LevelToColor[e.level];
+        StartCoroutine(MoveLevelNotification());
+    }
+
+    // Display resetart button
+    void _OnPlayerHitBottomEvent(PlayerHitBottomEvent e)
+    {
+        DeathGo.SetActive(true);
     }
 
     private void OnDestroy()
@@ -42,33 +55,35 @@ public class ScoreUI : MonoBehaviour
         EventBus.Unsubscribe(score_event_subscription);
     }
 
-    IEnumerator Move()
+
+    // Move notification in and out of screen view
+    IEnumerator MoveLevelNotification()
     {
        
         float elapsedTime = 0;
-        Vector3 orgPos = NotifcationText.transform.position;
+        Vector3 orgPos = NotifcationGo.transform.position;
         Debug.Log(orgPos);
         Vector3 targPos = new Vector3(orgPos.x, orgPos.y - 100, orgPos.z);
 
         // Move Down
         while (elapsedTime < timeToMove)
         {
-            NotifcationText.transform.position = Vector3.Lerp(orgPos, targPos, (elapsedTime / timeToMove));
+            NotifcationGo.transform.position = Vector3.Lerp(orgPos, targPos, (elapsedTime / timeToMove));
             elapsedTime += Time.deltaTime;
             yield return null;
         }
-        NotifcationText.transform.position = targPos;
+        NotifcationGo.transform.position = targPos;
         yield return new WaitForSeconds(3.0f);
 
         // Move Up
         elapsedTime = 0;
         while (elapsedTime < timeToMove)
         {
-            NotifcationText.transform.position = Vector3.Lerp(targPos, orgPos, (elapsedTime / timeToMove));
+            NotifcationGo.transform.position = Vector3.Lerp(targPos, orgPos, (elapsedTime / timeToMove));
             elapsedTime += Time.deltaTime;
             yield return null;
         }
-        NotifcationText.transform.position = orgPos;
+        NotifcationGo.transform.position = orgPos;
 
 
 

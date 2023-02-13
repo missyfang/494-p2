@@ -9,6 +9,7 @@ TagManager:
   - V0
   - CheckPoint
   - Bad
+  - V2
   layers:
   - Default
   - TransparentFX
