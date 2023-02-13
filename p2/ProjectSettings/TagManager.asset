@@ -10,6 +10,8 @@ TagManager:
   - Bad
   - V2
   - FallingRock
+  - FallThreshHold
+  - V3
   layers:
   - Default
   - TransparentFX

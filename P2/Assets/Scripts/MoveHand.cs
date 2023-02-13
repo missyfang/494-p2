@@ -182,36 +182,47 @@ public class MoveHand : MonoBehaviour
         foreach (GameObject rock in validRockGos)
         {
             if (Vector3.Distance(hand.transform.position, rock.transform.position) < 0.25f)
-                StartCoroutine(DamageEffect());
+            {
+                //StartCoroutine(DamageEffect());
+                Debug.Log("bad grab");
+                EventBus.Publish<GrabDamageEvent>(new GrabDamageEvent());
+            }
         }
 
         return false;
     }
 
-    // flash red and freeze when try to grab red rock. 
-    IEnumerator DamageEffect()
-    {
-        PlayerInfo.Instance.disableMovement = true;
-        // Flash
-        for (int i = 0; i < 5; i++)
-        {
-            head.GetComponent<Renderer>().material = flashMaterial;
-            yield return new WaitForSeconds(flashDuration);
+    //// flash red and freeze when try to grab red rock. 
+    //IEnumerator DamageEffect()
+    //{
+    //    PlayerInfo.Instance.disableMovement = true;
+    //    // Flash
+    //    for (int i = 0; i < 5; i++)
+    //    {
+    //        head.GetComponent<Renderer>().material = flashMaterial;
+    //        yield return new WaitForSeconds(flashDuration);
 
-            head.GetComponent<Renderer>().material = originalMaterial;
-            yield return new WaitForSeconds(flashDuration);
-        }
+    //        head.GetComponent<Renderer>().material = originalMaterial;
+    //        yield return new WaitForSeconds(flashDuration);
+    //    }
 
-        PlayerInfo.Instance.disableMovement = false;
+    //    PlayerInfo.Instance.disableMovement = false;
 
-    }
+    //}
 
 }
 
 
+// publish when player makes a successful grab.
 public class SuccessfulGrab
 {
     public GameObject successfulHandGo;
     public SuccessfulGrab(GameObject _successfulHandGo) { successfulHandGo = _successfulHandGo; }
 
+}
+
+// publish when player takes damage
+public class GrabDamageEvent
+{
+    public GrabDamageEvent() {}
 }

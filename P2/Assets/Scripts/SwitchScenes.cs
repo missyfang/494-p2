@@ -10,4 +10,9 @@ public class SwitchScenes : MonoBehaviour
     {
         SceneManager.LoadScene("LevelScene");
     }
+
+    public void SwitchToStartScene()
+    {
+        SceneManager.LoadScene("StartScene");
+    }
 }
