@@ -394,7 +394,7 @@ GameObject:
   - component: {fileID: 114317624}
   - component: {fileID: 114317623}
   m_Layer: 5
-  m_Name: NotificationText
+  m_Name: Start Button
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -464,7 +464,19 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 114317624}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 1598128075}
+        m_TargetAssemblyTypeName: SwitchScenes, Assembly-CSharp
+        m_MethodName: SwitchToLevelScene
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!114 &114317624
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3548,7 +3560,7 @@ GameObject:
   - component: {fileID: 1284939842}
   - component: {fileID: 1284939841}
   m_Layer: 5
-  m_Name: Score Text
+  m_Name: Title Text
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -4572,6 +4584,7 @@ GameObject:
   - component: {fileID: 1598128071}
   - component: {fileID: 1598128070}
   - component: {fileID: 1598128074}
+  - component: {fileID: 1598128075}
   m_Layer: 5
   m_Name: UI
   m_TagString: Untagged
@@ -4680,6 +4693,18 @@ MonoBehaviour:
   LevelColorMaterialsList:
   - {fileID: 2100000, guid: b9e0202bfc83c48c5a943b451a544f90, type: 2}
   - {fileID: 2100000, guid: e478d07a1971f44eb88c979eb987b2f1, type: 2}
+--- !u!114 &1598128075
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1598128069}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a1e1a8aa68a614bff840be6304b49988, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &1600504059
 GameObject:
   m_ObjectHideFlags: 0

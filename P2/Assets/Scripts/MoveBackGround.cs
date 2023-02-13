@@ -15,9 +15,9 @@ public class MoveBackGround : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (transform.position.y >= centerBackground.position.y + 14.0f)
+        if (transform.position.y >= centerBackground.position.y + 10.0f)
         {
-            centerBackground.position = new Vector3(centerBackground.position.x, transform.position.y + 14f, 0);
+            centerBackground.position = new Vector3(centerBackground.position.x, transform.position.y + 10f, 0);
         }
     }
 }

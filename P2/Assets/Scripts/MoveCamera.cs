@@ -23,14 +23,13 @@ public class MoveCamera : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-       
         if (!shouldMoveCamera)
             return;
 
         Vector3 pos = transform.position;
         pos.y += 1.0f * Time.deltaTime * upSpeed;
         transform.position = pos;
-        
+
     }
 
     void _OnPlayerHitBottom(PlayerHitBottomEvent e)
