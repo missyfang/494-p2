@@ -99,8 +99,6 @@ public class MoveHand : MonoBehaviour
         {
             StartCoroutine(HandFall());
         }
-
-
     }
 
 
@@ -127,11 +125,11 @@ public class MoveHand : MonoBehaviour
         hand.transform.position = targPos;
 
         // Check if rock is at hand pos
-        validRockGos = GameObject.FindGameObjectsWithTag("CheckPoint");
+        validRockGos = GameObject.FindGameObjectsWithTag(validRockTag);
         GameObject aValidRock = null; 
         foreach (GameObject rock in validRockGos)
         {
-            if (Vector3.Distance(hand.transform.position, rock.transform.position) < 0.25)
+            if (Vector3.Distance(hand.transform.position, rock.transform.position) < 0.3)
             {
                 aValidRock = rock;
                 break;
@@ -186,12 +184,21 @@ public class MoveHand : MonoBehaviour
     // Check if hand is at the same position as a valid rock
     private bool IsValidRock()
     {
+        // Check bad rocks
+        validRockGos = GameObject.FindGameObjectsWithTag("Bad");
+        foreach (GameObject rock in validRockGos)
+        {
+            if (Vector3.Distance(hand.transform.position, rock.transform.position) < 0.25f)
+            {
+                Debug.Log("bad grab");
+                EventBus.Publish<GrabDamageEvent>(new GrabDamageEvent());
+            }
+        }
         // Valid level rocks
         validRockGos = GameObject.FindGameObjectsWithTag(validRockTag);
         foreach(GameObject rock in validRockGos){
             if (Vector3.Distance(hand.transform.position, rock.transform.position) < 0.35f)
-            {
-                //StartCoroutine(RockHighlightOnCLick(rock));
+            { 
                 return true;
             }
         }
@@ -202,19 +209,6 @@ public class MoveHand : MonoBehaviour
             if (Vector3.Distance(hand.transform.position, rock.transform.position) < 0.25f)
                 return true;
         }
-
-        // Check bad racks
-        validRockGos = GameObject.FindGameObjectsWithTag("Bad");
-        foreach (GameObject rock in validRockGos)
-        {
-            if (Vector3.Distance(hand.transform.position, rock.transform.position) < 0.25f)
-            {
-                //StartCoroutine(DamageEffect());
-                Debug.Log("bad grab");
-                EventBus.Publish<GrabDamageEvent>(new GrabDamageEvent());
-            }
-        }
-
         return false;
     }
 
