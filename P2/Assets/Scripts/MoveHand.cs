@@ -7,6 +7,8 @@ using Vector3 = UnityEngine.Vector3;
 
 public class MoveHand : MonoBehaviour
 {
+    Subscription<DetectClickOnObjEvent> detect_click_on_obj_event_sub;
+
     private Vector3 orgPos;
     private Vector3 targPos;
     private Vector3 mousePos; 
@@ -14,9 +16,10 @@ public class MoveHand : MonoBehaviour
     private Rigidbody rb;
     private GameObject hand;
     private float alternateIndex = 1;
-    private GameObject[] validRockGos;
+   // private GameObject[] validRockGos;
     private string validRockTag;
     private bool NotifiedTooFar = false;
+    private GameObject rock;
 
     [SerializeField]
     float flashDuration;
@@ -37,16 +40,29 @@ public class MoveHand : MonoBehaviour
     [SerializeField]
     GameObject head;
 
-    void Update()
+    private void Start()
     {
-        validRockTag = "V" + PlayerInfo.Instance.Level.ToString();
+        detect_click_on_obj_event_sub = EventBus.Subscribe<DetectClickOnObjEvent>(_OnDetectClickOnObjEvent);
+    }
 
+    void _OnDetectClickOnObjEvent(DetectClickOnObjEvent e)
+    {
         if (PlayerInfo.Instance.disableMovement == true)
             return;
-        // On mouse click
-        if (Input.GetMouseButtonDown(0) && !isMoving)
+
+        rock = e.go;
+
+        //// Alternate between hands
+        //if (alternateIndex > 0)
+        //    hand = left;
+        //else
+        //    hand = right;
+
+        //alternateIndex *= -1;
+
+        if (!isMoving)
         {
-            mousePos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+            validRockTag = "V" + PlayerInfo.Instance.Level.ToString();
 
             // Alternate between hands
             if (alternateIndex > 0)
@@ -55,20 +71,50 @@ public class MoveHand : MonoBehaviour
                 hand = right;
 
             alternateIndex *= -1;
+            // Zero the z of target pos. 
+            targPos = new Vector3(rock.transform.position.x, rock.transform.position.y, 0);
 
-            if (!isMoving)
-            {
-                // Zero the z of target pos. 
-                targPos = new Vector3(mousePos.x, mousePos.y, 0);
-
-                // Check if reach is too far
-                if (Vector3.Distance(head.transform.position, targPos) > maxReachDistance)
-                    StartCoroutine(FailMove());
-                else
-                    StartCoroutine(Move());
-            }
-           
+            // Check if reach is too far
+            if (Vector3.Distance(head.transform.position, targPos) > maxReachDistance)
+                StartCoroutine(FailMove());
+            else
+                StartCoroutine(Move());
         }
+    }
+
+
+    void Update()
+    {
+        //validRockTag = "V" + PlayerInfo.Instance.Level.ToString();
+
+        //    if (PlayerInfo.Instance.disableMovement == true)
+        //        return;
+        //    // On mouse click
+        //    if (Input.GetMouseButtonDown(0) && !isMoving)
+        //    {
+        //        mousePos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+
+        //        // Alternate between hands
+        //        if (alternateIndex > 0)
+        //            hand = left;
+        //        else
+        //            hand = right;
+
+        //        alternateIndex *= -1;
+
+        //        if (!isMoving)
+        //        {
+        //            // Zero the z of target pos. 
+        //            targPos = new Vector3(mousePos.x, mousePos.y, 0);
+
+        //            // Check if reach is too far
+        //            if (Vector3.Distance(head.transform.position, targPos) > maxReachDistance)
+        //                StartCoroutine(FailMove());
+        //            else
+        //                StartCoroutine(Move());
+        //        }
+
+        //    }
     }
 
 
@@ -88,17 +134,31 @@ public class MoveHand : MonoBehaviour
         }
         hand.transform.position = targPos;
 
-        // Publish event if grab valid rock 
-        if (IsValidRock())
+        // Check if is bad rock
+        if (rock.CompareTag("Bad"))
+        {
+            StartCoroutine(HandFall());
+            EventBus.Publish<GrabDamageEvent>(new GrabDamageEvent());
+        }
+
+        // good grab publich event
+        else
         {
             EventBus.Publish<SuccessfulGrab>(new SuccessfulGrab(hand));
             isMoving = false;
         }
-        // Did not grab valid rock
-        else
-        {
-            StartCoroutine(HandFall());
-        }
+
+        //// Publish event if grab valid rock 
+        //if (IsValidRock())
+        //{
+        //    EventBus.Publish<SuccessfulGrab>(new SuccessfulGrab(hand));
+        //    isMoving = false;
+        //}
+        //// Did not grab valid rock
+        //else
+        //{
+        //    StartCoroutine(HandFall());
+        //}
     }
 
 
@@ -110,7 +170,7 @@ public class MoveHand : MonoBehaviour
         float elapsedTime = 0;
 
         // Calculate the vector between the mouse position and hand
-        Vector3 dir = (mousePos - hand.transform.position).normalized;
+        Vector3 dir = (rock.transform.position - hand.transform.position).normalized;
         orgPos = hand.transform.position;
         targPos = head.transform.position + (dir * maxReachDistance);
         targPos.z = 0;
@@ -124,9 +184,11 @@ public class MoveHand : MonoBehaviour
         }
         hand.transform.position = targPos;
 
+       //StartCoroutine(HandFall());
+
         // Check if rock is at hand pos
-        validRockGos = GameObject.FindGameObjectsWithTag(validRockTag);
-        GameObject aValidRock = null; 
+        GameObject[] validRockGos = GameObject.FindGameObjectsWithTag(validRockTag);
+        GameObject aValidRock = null;
         foreach (GameObject rock in validRockGos)
         {
             if (Vector3.Distance(hand.transform.position, rock.transform.position) < 0.3)
@@ -134,10 +196,10 @@ public class MoveHand : MonoBehaviour
                 aValidRock = rock;
                 break;
             }
-                
+
         }
         // check if that rok is at mouse click pos
-        if (aValidRock != null && Vector3.Distance(aValidRock.transform.position, mousePos) < 0.25)
+        if (aValidRock != null && aValidRock == rock)
         {
             EventBus.Publish<SuccessfulGrab>(new SuccessfulGrab(hand));
             isMoving = false;
@@ -149,7 +211,7 @@ public class MoveHand : MonoBehaviour
             if (!NotifiedTooFar)
             {
                 NotifiedTooFar = true;
-                EventBus.Publish<PlayerNotificationEvent>(new PlayerNotificationEvent("Click too far!", Color.black));
+                EventBus.Publish<PlayerNotificationEvent>(new PlayerNotificationEvent("Too far!", Color.black));
             }
             StartCoroutine(HandFall());
         }
@@ -177,40 +239,41 @@ public class MoveHand : MonoBehaviour
         hand.transform.position = targPos;
 
         // Change alternating to use failed hand on next grab.
+        Debug.Log("hand index" + alternateIndex);
         alternateIndex *= -1;
         isMoving = false;
     }
 
-    // Check if hand is at the same position as a valid rock
-    private bool IsValidRock()
-    {
-        // Check bad rocks
-        validRockGos = GameObject.FindGameObjectsWithTag("Bad");
-        foreach (GameObject rock in validRockGos)
-        {
-            if (Vector3.Distance(hand.transform.position, rock.transform.position) < 0.25f)
-            {
-                Debug.Log("bad grab");
-                EventBus.Publish<GrabDamageEvent>(new GrabDamageEvent());
-            }
-        }
-        // Valid level rocks
-        validRockGos = GameObject.FindGameObjectsWithTag(validRockTag);
-        foreach(GameObject rock in validRockGos){
-            if (Vector3.Distance(hand.transform.position, rock.transform.position) < 0.35f)
-            { 
-                return true;
-            }
-        }
-        // Check point rocks
-        validRockGos = GameObject.FindGameObjectsWithTag("CheckPoint");
-        foreach (GameObject rock in validRockGos)
-        {
-            if (Vector3.Distance(hand.transform.position, rock.transform.position) < 0.25f)
-                return true;
-        }
-        return false;
-    }
+    //// Check if hand is at the same position as a valid rock
+    //private bool IsValidRock()
+    //{
+    //    // Check bad rocks
+    //    validRockGos = GameObject.FindGameObjectsWithTag("Bad");
+    //    foreach (GameObject rock in validRockGos)
+    //    {
+    //        if (Vector3.Distance(hand.transform.position, rock.transform.position) < 0.25f)
+    //        {
+    //            Debug.Log("bad grab");
+    //            EventBus.Publish<GrabDamageEvent>(new GrabDamageEvent());
+    //        }
+    //    }
+    //    // Valid level rocks
+    //    validRockGos = GameObject.FindGameObjectsWithTag(validRockTag);
+    //    foreach(GameObject rock in validRockGos){
+    //        if (Vector3.Distance(hand.transform.position, rock.transform.position) < 0.35f)
+    //        { 
+    //            return true;
+    //        }
+    //    }
+    //    // Check point rocks
+    //    validRockGos = GameObject.FindGameObjectsWithTag("CheckPoint");
+    //    foreach (GameObject rock in validRockGos)
+    //    {
+    //        if (Vector3.Distance(hand.transform.position, rock.transform.position) < 0.25f)
+    //            return true;
+    //    }
+    //    return false;
+    //}
 
 }
 
