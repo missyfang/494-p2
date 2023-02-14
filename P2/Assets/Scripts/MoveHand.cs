@@ -16,7 +16,7 @@ public class MoveHand : MonoBehaviour
     private float alternateIndex = 1;
     private GameObject[] validRockGos;
     private string validRockTag;
-
+    private bool NotifiedTooFar = false;
 
     [SerializeField]
     float flashDuration;
@@ -60,13 +60,10 @@ public class MoveHand : MonoBehaviour
             {
                 // Zero the z of target pos. 
                 targPos = new Vector3(mousePos.x, mousePos.y, 0);
-               
 
                 // Check if reach is too far
                 if (Vector3.Distance(head.transform.position, targPos) > maxReachDistance)
-                {
                     StartCoroutine(FailMove());
-                }
                 else
                     StartCoroutine(Move());
             }
@@ -99,7 +96,9 @@ public class MoveHand : MonoBehaviour
         }
         // Did not grab valid rock
         else
+        {
             StartCoroutine(HandFall());
+        }
 
 
     }
@@ -147,7 +146,15 @@ public class MoveHand : MonoBehaviour
         }
 
         else
+        {
+            // Notify player that rock was too far on first attempt
+            if (!NotifiedTooFar)
+            {
+                NotifiedTooFar = true;
+                EventBus.Publish<PlayerNotificationEvent>(new PlayerNotificationEvent("Click too far!", Color.black));
+            }
             StartCoroutine(HandFall());
+        }
     }
 
 
@@ -160,7 +167,7 @@ public class MoveHand : MonoBehaviour
         targPos.z = 0;
         targPos.y = targPos.y - 1.0f;
         Vector3 dir = targPos - hand.transform.position;
-        Debug.Log("this is the target" + targPos);
+
         // Hand fall down
         while (Vector3.Distance(hand.transform.position, targPos) > 0.1f)
         {
@@ -182,8 +189,11 @@ public class MoveHand : MonoBehaviour
         // Valid level rocks
         validRockGos = GameObject.FindGameObjectsWithTag(validRockTag);
         foreach(GameObject rock in validRockGos){
-            if (Vector3.Distance(hand.transform.position, rock.transform.position) < 0.25f)
+            if (Vector3.Distance(hand.transform.position, rock.transform.position) < 0.35f)
+            {
+                //StartCoroutine(RockHighlightOnCLick(rock));
                 return true;
+            }
         }
         // Check point rocks
         validRockGos = GameObject.FindGameObjectsWithTag("CheckPoint");

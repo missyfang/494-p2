@@ -13,17 +13,19 @@ public class LevelUpOnTrigger : MonoBehaviour
         hasBeenTouched = true;
         // Increase level.
         PlayerInfo.Instance.ModifyLevel(1);
-        // Publish level up event.
-      
 
-        EventBus.Publish<LevelUpEvent>(new LevelUpEvent("V" + PlayerInfo.Instance.Level.ToString()));
+        // Publish level up event.
+        string level = "V" + PlayerInfo.Instance.Level.ToString();
+        Color levelColor = PlayerInfo.Instance.LevelToColor[level];
+        EventBus.Publish<PlayerNotificationEvent>(new PlayerNotificationEvent("Level Up! " + level, levelColor));
        
 
     }
 }
 
-public class LevelUpEvent
+public class PlayerNotificationEvent
 {
-    public string level = "V0";
-    public LevelUpEvent(string _level) { level = _level; }
+    public string message = "V0";
+    public Color messageColor = Color.blue;
+    public PlayerNotificationEvent(string _message, Color _messageColor) { message = _message; messageColor = _messageColor; }
 }

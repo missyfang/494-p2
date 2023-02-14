@@ -7,7 +7,7 @@ using TMPro;
 public class ScoreUI : MonoBehaviour
 {
     Subscription<ScoreEvent> score_event_subscription;
-    Subscription<LevelUpEvent> level_up_event_subscription;
+    Subscription<PlayerNotificationEvent> level_up_event_subscription;
     Subscription<PlayerHitBottomEvent> player_hit_bottom_event_sub;
     [SerializeField]
     TextMeshProUGUI scoreText;
@@ -24,7 +24,7 @@ public class ScoreUI : MonoBehaviour
     {
         DeathGo.SetActive(false);
         score_event_subscription = EventBus.Subscribe<ScoreEvent>(_OnScoreUpdated);
-        level_up_event_subscription = EventBus.Subscribe<LevelUpEvent>(_OnLevelUp);
+        level_up_event_subscription = EventBus.Subscribe<PlayerNotificationEvent>(_OnLevelUp);
         player_hit_bottom_event_sub = EventBus.Subscribe<PlayerHitBottomEvent>(_OnPlayerHitBottomEvent);
         StartCoroutine(MoveLevelNotification());
     }
@@ -36,11 +36,11 @@ public class ScoreUI : MonoBehaviour
     }
 
     // Notify player they moved up a level
-    void _OnLevelUp(LevelUpEvent e)
+    void _OnLevelUp(PlayerNotificationEvent e)
     {
-        NotifcationGo.GetComponentInChildren<TextMeshProUGUI>().text ="Level Up! " + e.level;
-        Debug.Log(e.level);
-        NotifcationGo.GetComponent<Image>().color = PlayerInfo.Instance.LevelToColor[e.level];
+        NotifcationGo.GetComponentInChildren<TextMeshProUGUI>().text = e.message;
+        Debug.Log(e.message);
+        NotifcationGo.GetComponent<Image>().color = e.messageColor;
         StartCoroutine(MoveLevelNotification());
     }
 
