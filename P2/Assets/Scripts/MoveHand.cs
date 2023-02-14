@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Numerics;
 using TMPro;
 using UnityEngine;
-using static UnityEditor.Experimental.GraphView.GraphView;
+//using static UnityEditor.Experimental.GraphView.GraphView;
 using Vector3 = UnityEngine.Vector3;
 
 public class MoveHand : MonoBehaviour
