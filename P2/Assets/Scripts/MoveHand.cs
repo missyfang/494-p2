@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Numerics;
 using TMPro;
 using UnityEngine;
-//using static UnityEditor.Experimental.GraphView.GraphView;
 using Vector3 = UnityEngine.Vector3;
 
 public class MoveHand : MonoBehaviour
@@ -61,6 +60,7 @@ public class MoveHand : MonoBehaviour
             {
                 // Zero the z of target pos. 
                 targPos = new Vector3(mousePos.x, mousePos.y, 0);
+               
 
                 // Check if reach is too far
                 if (Vector3.Distance(head.transform.position, targPos) > maxReachDistance)
@@ -101,8 +101,10 @@ public class MoveHand : MonoBehaviour
         else
             StartCoroutine(HandFall());
 
-      
+
     }
+
+
 
     // Move hand as close to mouse click osition as allowed
     private IEnumerator FailMove()
@@ -125,13 +127,27 @@ public class MoveHand : MonoBehaviour
         }
         hand.transform.position = targPos;
 
-        // Pause
-        yield return new WaitForSeconds(0.1f);
+        // Check if rock is at hand pos
+        validRockGos = GameObject.FindGameObjectsWithTag("CheckPoint");
+        GameObject aValidRock = null; 
+        foreach (GameObject rock in validRockGos)
+        {
+            if (Vector3.Distance(hand.transform.position, rock.transform.position) < 0.25)
+            {
+                aValidRock = rock;
+                break;
+            }
+                
+        }
+        // check if that rok is at mouse click pos
+        if (aValidRock != null && Vector3.Distance(aValidRock.transform.position, mousePos) < 0.25)
+        {
+            EventBus.Publish<SuccessfulGrab>(new SuccessfulGrab(hand));
+            isMoving = false;
+        }
 
-        // Hand falls below head
-        StartCoroutine(HandFall());
-        
-       
+        else
+            StartCoroutine(HandFall());
     }
 
 
@@ -142,7 +158,7 @@ public class MoveHand : MonoBehaviour
         rb = hand.GetComponent<Rigidbody>();
         targPos = head.transform.position;
         targPos.z = 0;
-        targPos.y = targPos.y - 2.0f;
+        targPos.y = targPos.y - 1.0f;
         Vector3 dir = targPos - hand.transform.position;
         Debug.Log("this is the target" + targPos);
         // Hand fall down
@@ -191,24 +207,6 @@ public class MoveHand : MonoBehaviour
 
         return false;
     }
-
-    //// flash red and freeze when try to grab red rock. 
-    //IEnumerator DamageEffect()
-    //{
-    //    PlayerInfo.Instance.disableMovement = true;
-    //    // Flash
-    //    for (int i = 0; i < 5; i++)
-    //    {
-    //        head.GetComponent<Renderer>().material = flashMaterial;
-    //        yield return new WaitForSeconds(flashDuration);
-
-    //        head.GetComponent<Renderer>().material = originalMaterial;
-    //        yield return new WaitForSeconds(flashDuration);
-    //    }
-
-    //    PlayerInfo.Instance.disableMovement = false;
-
-    //}
 
 }
 
