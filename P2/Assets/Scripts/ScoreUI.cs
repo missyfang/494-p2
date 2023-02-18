@@ -14,7 +14,9 @@ public class ScoreUI : MonoBehaviour
     [SerializeField]
     GameObject NotifcationGo;
     [SerializeField]
-    GameObject DeathGo;
+    GameObject RestartGo;
+    [SerializeField]
+    GameObject HomeGo;
     [SerializeField]
     float timeToMove;
     [SerializeField]
@@ -24,12 +26,19 @@ public class ScoreUI : MonoBehaviour
     [SerializeField]
     AudioClip errorSfx;
     [SerializeField]
+    AudioClip DeathSfx;
+    [SerializeField]
     AudioSource audioSource;
+    [SerializeField]
+    ParticleSystem blood;
 
+    bool HasDied;
 
     void Start()
     {
-        DeathGo.SetActive(false);
+        HasDied = false;
+        RestartGo.SetActive(false);
+        HomeGo.SetActive(false);
         score_event_subscription = EventBus.Subscribe<ScoreEvent>(_OnScoreUpdated);
         level_up_event_subscription = EventBus.Subscribe<PlayerNotificationEvent>(_OnLevelUp);
         player_hit_bottom_event_sub = EventBus.Subscribe<PlayerHitBottomEvent>(_OnPlayerHitBottomEvent);
@@ -60,7 +69,17 @@ public class ScoreUI : MonoBehaviour
     // Display resetart button
     void _OnPlayerHitBottomEvent(PlayerHitBottomEvent e)
     {
-        DeathGo.SetActive(true);
+        if (HasDied)
+            return;
+
+        if (!blood.isPlaying)
+            blood.Play();
+
+        audioSource.PlayOneShot(DeathSfx);
+        RestartGo.SetActive(true);
+        HomeGo.SetActive(true);
+
+        HasDied = true;
     }
 
     private void OnDestroy()

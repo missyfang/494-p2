@@ -8,7 +8,7 @@ public class PlayerDieOnTrigger : MonoBehaviour
     GameObject playerHead;
     [SerializeField]
     Material Deadmaterial;
-
+  
     private void OnTriggerEnter(Collider other)
     {
         EventBus.Publish<PlayerHitBottomEvent>(new PlayerHitBottomEvent());

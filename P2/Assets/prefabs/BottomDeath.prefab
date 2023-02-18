@@ -97,7 +97,7 @@ BoxCollider:
   m_IsTrigger: 1
   m_Enabled: 1
   serializedVersion: 2
-  m_Size: {x: 1, y: 1, z: 1}
+  m_Size: {x: 1.54, y: 1.56, z: 4}
   m_Center: {x: 0, y: 0, z: 0}
 --- !u!114 &8962777184898122927
 MonoBehaviour:
@@ -131,3 +131,4 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   playerHead: {fileID: 0}
   Deadmaterial: {fileID: 2100000, guid: 50ec6555f3e604957b22f3f21dd000ca, type: 2}
+  blood: {fileID: 0}

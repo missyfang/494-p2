@@ -26,22 +26,35 @@ public class MoveHand : MonoBehaviour
     Material flashMaterial;
     [SerializeField]
     Material originalMaterial;
+
     [SerializeField]
     float timeToMove;
     [SerializeField]
     float timeToFall;
+
     [SerializeField]
     float maxReachDistance;
     [SerializeField]
     float pushStrength;
+
     [SerializeField]
     GameObject left;
     [SerializeField]
     GameObject right;
     [SerializeField]
     GameObject head;
+
     [SerializeField]
     GameObject reachRadiuslight;
+
+    [SerializeField]
+    AudioClip grabSfx;
+    [SerializeField]
+    AudioClip badGrabSfx;
+    [SerializeField]
+    AudioSource audioSource;
+    [SerializeField]
+    float volume;
 
     private void Start()
     {
@@ -56,17 +69,20 @@ public class MoveHand : MonoBehaviour
         if (Input.GetMouseButtonDown(0) && !isMoving)
         {
             Debug.Log("handindex" + alternateIndex);
-
+          
             mousePos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
             // If click on something code should not ex
+           
             RaycastHit raycastHit;
             Ray ray = Camera.main.ScreenPointToRay(mousePos);
-            if (Physics.Raycast(ray, out raycastHit, 100f))
+            if (Physics.Raycast(ray, out raycastHit, 300f))
             {
-                if (raycastHit.transform != null)
+                Debug.Log("point to check 1");
+                Debug.Log(raycastHit.transform.tag);
+                if (raycastHit.transform != null && !raycastHit.transform.CompareTag("Untagged" ))
                     return;
             }
-
+            Debug.Log("point to check 2");
             // Alternate between hands
             if (alternateIndex > 0)
                 hand = left;
@@ -151,6 +167,7 @@ public class MoveHand : MonoBehaviour
         // Check if is bad rock
         else if (rock.CompareTag("Bad"))
         {
+            audioSource.PlayOneShot(badGrabSfx, volume);
             StartCoroutine(HandFall(timeToFall));
             EventBus.Publish<GrabDamageEvent>(new GrabDamageEvent());
         }
@@ -158,6 +175,7 @@ public class MoveHand : MonoBehaviour
         // good grab publich event
         else
         {
+            audioSource.PlayOneShot(grabSfx, volume);
             EventBus.Publish<SuccessfulGrab>(new SuccessfulGrab(hand));
             isMoving = false;
         }
