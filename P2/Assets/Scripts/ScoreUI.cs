@@ -19,6 +19,13 @@ public class ScoreUI : MonoBehaviour
     float timeToMove;
     [SerializeField]
     Material[] LevelColorMaterialsList;
+    [SerializeField]
+    AudioClip levelUpSfx;
+    [SerializeField]
+    AudioClip errorSfx;
+    [SerializeField]
+    AudioSource audioSource;
+
 
     void Start()
     {
@@ -26,7 +33,10 @@ public class ScoreUI : MonoBehaviour
         score_event_subscription = EventBus.Subscribe<ScoreEvent>(_OnScoreUpdated);
         level_up_event_subscription = EventBus.Subscribe<PlayerNotificationEvent>(_OnLevelUp);
         player_hit_bottom_event_sub = EventBus.Subscribe<PlayerHitBottomEvent>(_OnPlayerHitBottomEvent);
-        StartCoroutine(MoveLevelNotification());
+
+        // Inital level notification
+        EventBus.Publish<PlayerNotificationEvent>(new PlayerNotificationEvent("V0", new Color(0f, 0.4431371f, 1.0f, 1.0f)));
+
     }
 
     // Count good rocks grabs
@@ -38,10 +48,13 @@ public class ScoreUI : MonoBehaviour
     // Notify player they moved up a level
     void _OnLevelUp(PlayerNotificationEvent e)
     {
+        
         NotifcationGo.GetComponentInChildren<TextMeshProUGUI>().text = e.message;
+        
         Debug.Log(e.message);
         NotifcationGo.GetComponent<Image>().color = e.messageColor;
-        StartCoroutine(MoveLevelNotification());
+        StartCoroutine(MoveLevelNotification(e.message));
+       
     }
 
     // Display resetart button
@@ -57,7 +70,7 @@ public class ScoreUI : MonoBehaviour
 
 
     // Move notification in and out of screen view
-    IEnumerator MoveLevelNotification()
+    IEnumerator MoveLevelNotification(string message)
     {
        
         float elapsedTime = 0;
@@ -73,7 +86,13 @@ public class ScoreUI : MonoBehaviour
             yield return null;
         }
         NotifcationGo.transform.position = targPos;
-        yield return new WaitForSeconds(0.5f);
+        // play audio
+        if (message == "Too far!")
+            audioSource.PlayOneShot(errorSfx);
+        else
+            audioSource.PlayOneShot(levelUpSfx);
+
+        yield return new WaitForSeconds(1.0f);
 
         // Move Up
         elapsedTime = 0;

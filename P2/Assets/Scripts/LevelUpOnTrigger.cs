@@ -11,6 +11,7 @@ public class LevelUpOnTrigger : MonoBehaviour
             return;
 
         hasBeenTouched = true;
+
         // Increase level.
         PlayerInfo.Instance.ModifyLevel(1);
 

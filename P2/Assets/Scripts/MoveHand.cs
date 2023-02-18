@@ -29,6 +29,8 @@ public class MoveHand : MonoBehaviour
     [SerializeField]
     float timeToMove;
     [SerializeField]
+    float timeToFall;
+    [SerializeField]
     float maxReachDistance;
     [SerializeField]
     float pushStrength;
@@ -38,6 +40,8 @@ public class MoveHand : MonoBehaviour
     GameObject right;
     [SerializeField]
     GameObject head;
+    [SerializeField]
+    GameObject reachRadiuslight;
 
     private void Start()
     {
@@ -51,6 +55,8 @@ public class MoveHand : MonoBehaviour
         // detect clicks on screen not over obj
         if (Input.GetMouseButtonDown(0) && !isMoving)
         {
+            Debug.Log("handindex" + alternateIndex);
+
             mousePos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
             // If click on something code should not ex
             RaycastHit raycastHit;
@@ -72,7 +78,7 @@ public class MoveHand : MonoBehaviour
             // set rock to null
             rock = null;
             // calc pos to move towards
-            targPos = new Vector3(mousePos.x, mousePos.y, 0);
+            targPos = new Vector3(mousePos.x, mousePos.y, -1);
 
             //check how far the reach is
             if (Vector3.Distance(head.transform.position, targPos) > maxReachDistance)
@@ -91,6 +97,8 @@ public class MoveHand : MonoBehaviour
 
         if (!isMoving)
         {
+
+            Debug.Log("handindex on rock" + alternateIndex);
             validRockTag = "V" + PlayerInfo.Instance.Level.ToString();
 
             // Alternate between hands
@@ -101,11 +109,13 @@ public class MoveHand : MonoBehaviour
 
             alternateIndex *= -1;
             // Zero the z of target pos. 
-            targPos = new Vector3(rock.transform.position.x, rock.transform.position.y, 0);
+            targPos = new Vector3(rock.transform.position.x, rock.transform.position.y, -1);
 
             // Check if reach is too far
             if (Vector3.Distance(head.transform.position, targPos) > maxReachDistance)
+            {
                 StartCoroutine(FailMove());
+            }
             else
                 StartCoroutine(Move());
 
@@ -115,6 +125,11 @@ public class MoveHand : MonoBehaviour
     // Move Hand to mouse click position
     private IEnumerator Move()
     {
+        ;
+        rb = hand.GetComponent<Rigidbody>();
+        rb.isKinematic = true;
+        rb.useGravity = false;
+
         isMoving = true;
         float elapsedTime = 0;
         orgPos = hand.transform.position;
@@ -131,12 +146,12 @@ public class MoveHand : MonoBehaviour
         // Check if did not reach for any rock
         if(rock == null)
         {
-            StartCoroutine(HandFall());
+            StartCoroutine(HandFall(timeToFall));
         }
         // Check if is bad rock
         else if (rock.CompareTag("Bad"))
         {
-            StartCoroutine(HandFall());
+            StartCoroutine(HandFall(timeToFall));
             EventBus.Publish<GrabDamageEvent>(new GrabDamageEvent());
         }
 
@@ -153,25 +168,17 @@ public class MoveHand : MonoBehaviour
     // Move hand as close to mouse click osition as allowed
     private IEnumerator FailMove()
     {
+        rb = hand.GetComponent<Rigidbody>();
+        rb.isKinematic = true;
+        rb.useGravity = false;
+
         isMoving = true;
         float elapsedTime = 0;
-       
-
-
-        //// Calculate the vector between the mouse position and hand
-        //if (rock != null)
-        //{
-        //    Vector3 temp = new Vector3(rock.transform.position.x, rock.transform.position.y, 0);
-        //    dir = (temp - hand.transform.position).normalized;
-        //}
-        //else
-        //{
-
-        //}
+      
         Vector3  dir = (targPos - hand.transform.position).normalized;
         orgPos = hand.transform.position;
         targPos = head.transform.position + (dir * maxReachDistance);
-        targPos.z = 0;
+        targPos.z = -1;
 
         // Hand move up
         while (elapsedTime < timeToMove)
@@ -205,43 +212,43 @@ public class MoveHand : MonoBehaviour
 
             else
             {
+                // extra time penalty for over reach
+                StartCoroutine(HandFall(timeToFall + 1));
+                // Turn on reach radius light
+                reachRadiuslight.SetActive(true);
+
                 // Notify player that rock was too far on first attempt
                 if (!NotifiedTooFar)
                 {
                     NotifiedTooFar = true;
                     EventBus.Publish<PlayerNotificationEvent>(new PlayerNotificationEvent("Too far!", Color.black));
                 }
-                StartCoroutine(HandFall());
             }
         }
         else
-            StartCoroutine(HandFall());
+            StartCoroutine(HandFall(timeToFall));
     }
 
 
-    // Move hand to postion below head. 
-    private IEnumerator HandFall()
+    // Turn on gracity to allow hand to fall. 
+    private IEnumerator HandFall(float time)
     {
-        // Calculate the opposite vector between the mouse position and hand
+       
         rb = hand.GetComponent<Rigidbody>();
-        targPos = head.transform.position;
-        targPos.z = 0;
-        targPos.y = targPos.y - 1.0f;
-        Vector3 dir = targPos - hand.transform.position;
+        rb.isKinematic = false;
+        rb.useGravity = true;
+        float elapsedTime = 0;
 
-        // Hand fall down
-        while (Vector3.Distance(hand.transform.position, targPos) > 0.1f)
+        // small penalty
+        while (elapsedTime < time)
         {
-            rb.AddForce(dir.normalized * pushStrength, ForceMode.Force);
             yield return null;
+            elapsedTime += Time.deltaTime;
         }
-        
-        rb.velocity = Vector3.zero;
-        hand.transform.position = targPos;
-
+        reachRadiuslight.SetActive(false);
         // Change alternating to use failed hand on next grab.
-        Debug.Log("hand index" + alternateIndex);
         alternateIndex *= -1;
+        yield return null;
         isMoving = false;
     }
 

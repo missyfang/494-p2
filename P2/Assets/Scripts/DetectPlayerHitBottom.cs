@@ -28,7 +28,7 @@ public class DetectPlayerHitBottom : MonoBehaviour
 
 }
 
-public class PlayerHitBottomEvent
-{
-    public PlayerHitBottomEvent() { }
-}
+//public class PlayerHitBottomEvent
+//{
+//    public PlayerHitBottomEvent() { }
+//}
