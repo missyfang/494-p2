@@ -5,44 +5,21 @@ using UnityEngine.SceneManagement;
 
 public class SwitchScenes : MonoBehaviour
 {
-    //[SerializeField]
-    //GameObject Panel;
-    //[SerializeField]
-    //Sprite Play;
-    //[SerializeField]
-    //Sprite Pause;
+    [SerializeField]
+    AudioSource source;
+    [SerializeField]
+    AudioClip clip;
 
-    //bool playPause = false;
-
-   public void SwitchToLevelScene()
+    public void SwitchToLevelScene()
     {
+        source.PlayOneShot(clip, 0.5f);
         SceneManager.LoadScene("LevelScene");
     }
 
     public void SwitchToStartScene()
     {
+        source.PlayOneShot(clip, 0.5f);
         SceneManager.LoadScene("StartScene");
     }
-
-    //public void PlayPause()
-    //{
-    //    // Play
-    //    if (!playPause)
-    //    {
-    //        PlayerInfo.Instance.disableMovement = true;
-    //        EventBus.Publish<StartCameraMovementEvent>(new StartCameraMovementEvent(0.0f));
-    //        Panel.SetActive(true);
-    //    }
-
-    //    // Pause
-    //    else {
-    //        EventBus.Publish<StartCameraMovementEvent>(new StartCameraMovementEvent(PlayerInfo.LastCheckPointCameraSpeed));
-    //        PlayerInfo.Instance.disableMovement = false;
-    //        Panel.SetActive(false);
-    //    }
-
-    //    playPause = !playPause;
-    //}
-
       
 }

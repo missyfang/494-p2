@@ -14,10 +14,16 @@ public class TogglePlayPause : MonoBehaviour
     [SerializeField]
     Button button;
 
+    [SerializeField]
+    AudioSource source;
+    [SerializeField]
+    AudioClip clip;
+
     private bool playPause = false;
 
     public void PlayPause()
     {
+        source.PlayOneShot(clip,0.5f);
         // Play
         if (!playPause)
         {

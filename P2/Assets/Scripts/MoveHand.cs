@@ -82,9 +82,10 @@ public class MoveHand : MonoBehaviour
                     return;
             }
             Debug.Log("Distance" + Vector3.Distance(mousePos, pauseButton.transform.position));
+
             // explicit check for click on pause button
-            if (Vector3.Distance(mousePos, pauseButton.transform.position) < 1000f)
-                return;
+            //if (Vector3.Distance(mousePos, pauseButton.transform.position) < 1000f)
+            //    return;
 
             // Alternate between hands
             if (alternateIndex > 0)
