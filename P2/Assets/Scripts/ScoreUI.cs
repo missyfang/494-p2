@@ -44,7 +44,11 @@ public class ScoreUI : MonoBehaviour
         player_hit_bottom_event_sub = EventBus.Subscribe<PlayerHitBottomEvent>(_OnPlayerHitBottomEvent);
 
         // Inital level notification
-        EventBus.Publish<PlayerNotificationEvent>(new PlayerNotificationEvent("V0", new Color(0f, 0.4431371f, 1.0f, 1.0f)));
+        // EventBus.Publish<PlayerNotificationEvent>(new PlayerNotificationEvent("V0", playerInfo);
+        // Publish level up event.
+        //string level = "V" + PlayerInfo.Level.ToString();
+        //Color levelColor = PlayerInfo.Instance.LevelToColor[level];
+        //EventBus.Publish<PlayerNotificationEvent>(new PlayerNotificationEvent(level, levelColor));
 
     }
 

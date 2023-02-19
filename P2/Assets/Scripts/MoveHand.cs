@@ -118,7 +118,7 @@ public class MoveHand : MonoBehaviour
         if (!isMoving)
         {
             // Set current valid rock tag
-            validRockTag = "V" + PlayerInfo.Instance.Level.ToString();
+            validRockTag = "V" + PlayerInfo.Level.ToString();
 
             // Alternate between hands
             if (alternateIndex > 0)

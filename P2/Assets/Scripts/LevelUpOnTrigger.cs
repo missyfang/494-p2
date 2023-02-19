@@ -4,6 +4,9 @@ using UnityEngine;
 
 public class LevelUpOnTrigger : MonoBehaviour
 {
+    [SerializeField]
+    int checkPointlevel = 0;
+
     bool hasBeenTouched = false;
     private void OnTriggerEnter(Collider other)
     {
@@ -20,12 +23,12 @@ public class LevelUpOnTrigger : MonoBehaviour
             PlayerInfo.LastCheckPointCameraSpeed = GetComponent<StartCameraMovement>().cameraSpeed;
 
             // Increase level.
-            PlayerInfo.Instance.ModifyLevel(1);
+            PlayerInfo.Level = checkPointlevel;
 
             // Publish level up event.
-            string level = "V" + PlayerInfo.Instance.Level.ToString();
+            string level = "V" + PlayerInfo.Level.ToString();
             Color levelColor = PlayerInfo.Instance.LevelToColor[level];
-            EventBus.Publish<PlayerNotificationEvent>(new PlayerNotificationEvent("Level Up! " + level, levelColor));
+            EventBus.Publish<PlayerNotificationEvent>(new PlayerNotificationEvent(level, levelColor));
         }
 
     }
