@@ -11,8 +11,11 @@ public class PlayerDieOnTrigger : MonoBehaviour
   
     private void OnTriggerEnter(Collider other)
     {
-        EventBus.Publish<PlayerHitBottomEvent>(new PlayerHitBottomEvent());
-        playerHead.GetComponent<Renderer>().material = Deadmaterial;
+        if (other.CompareTag("Player"))
+        {
+            EventBus.Publish<PlayerHitBottomEvent>(new PlayerHitBottomEvent());
+            playerHead.GetComponent<Renderer>().material = Deadmaterial;
+        }
     }
 }
 

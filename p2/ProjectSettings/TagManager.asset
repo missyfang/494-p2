@@ -12,6 +12,7 @@ TagManager:
   - FallingRock
   - FallThreshHold
   - V3
+  - UI
   layers:
   - Default
   - TransparentFX

@@ -7,19 +7,26 @@ public class LevelUpOnTrigger : MonoBehaviour
     bool hasBeenTouched = false;
     private void OnTriggerEnter(Collider other)
     {
-        if (hasBeenTouched)
-            return;
+        if (other.CompareTag("Player"))
+        {
+            if (hasBeenTouched)
+                return;
 
-        hasBeenTouched = true;
+            hasBeenTouched = true;
 
-        // Increase level.
-        PlayerInfo.Instance.ModifyLevel(1);
+            // Update last checkpoint
+            PlayerInfo.LastCheckPointPosition = transform.position;
+            PlayerInfo.LastCheckPointCameraPosition = Camera.main.transform.position;
+            PlayerInfo.LastCheckPointCameraSpeed = GetComponent<StartCameraMovement>().cameraSpeed;
 
-        // Publish level up event.
-        string level = "V" + PlayerInfo.Instance.Level.ToString();
-        Color levelColor = PlayerInfo.Instance.LevelToColor[level];
-        EventBus.Publish<PlayerNotificationEvent>(new PlayerNotificationEvent("Level Up! " + level, levelColor));
-       
+            // Increase level.
+            PlayerInfo.Instance.ModifyLevel(1);
+
+            // Publish level up event.
+            string level = "V" + PlayerInfo.Instance.Level.ToString();
+            Color levelColor = PlayerInfo.Instance.LevelToColor[level];
+            EventBus.Publish<PlayerNotificationEvent>(new PlayerNotificationEvent("Level Up! " + level, levelColor));
+        }
 
     }
 }

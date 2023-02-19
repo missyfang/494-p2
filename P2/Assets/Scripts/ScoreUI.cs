@@ -75,6 +75,8 @@ public class ScoreUI : MonoBehaviour
         if (!blood.isPlaying)
             blood.Play();
 
+        PlayerInfo.Instance.disableMovement = true;
+
         audioSource.PlayOneShot(DeathSfx);
         RestartGo.SetActive(true);
         HomeGo.SetActive(true);

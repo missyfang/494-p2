@@ -12,12 +12,22 @@ public class PlayerInfo : MonoBehaviour
 
     // Singelton 
     public static PlayerInfo Instance;
-    public int Level = 0;
+    // Player starting pos
+    public static Vector3 LastCheckPointPosition = new Vector3(0, -31, -1);
+    // Player starting pos
+    public static Vector3 LastCheckPointCameraPosition = new Vector3(0, -27.7000008f, -2);
+    public static float LastCheckPointCameraSpeed = 0; 
+   public int Level = 0;
     public bool disableMovement = false; 
    
 
     private void Awake()
     {
+        // Set up for last checkpoint 
+        transform.position = LastCheckPointPosition;
+        Camera.main.transform.position = LastCheckPointCameraPosition;
+        EventBus.Publish<StartCameraMovementEvent>(new StartCameraMovementEvent(LastCheckPointCameraSpeed));
+
         if (Instance != null && Instance != this)
         {
             Destroy(this);

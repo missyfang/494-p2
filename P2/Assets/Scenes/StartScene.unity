@@ -4602,7 +4602,6 @@ GameObject:
   - component: {fileID: 1598128072}
   - component: {fileID: 1598128071}
   - component: {fileID: 1598128070}
-  - component: {fileID: 1598128074}
   - component: {fileID: 1598128075}
   m_Layer: 5
   m_Name: UI
@@ -4694,25 +4693,6 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0, y: 0}
---- !u!114 &1598128074
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1598128069}
-  m_Enabled: 0
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: b9c154d60c58c3b4895e7e376089d635, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  scoreText: {fileID: 1284939841}
-  NotifcationGo: {fileID: 0}
-  DeathGo: {fileID: 0}
-  timeToMove: 0.5
-  LevelColorMaterialsList:
-  - {fileID: 2100000, guid: b9e0202bfc83c48c5a943b451a544f90, type: 2}
-  - {fileID: 2100000, guid: e478d07a1971f44eb88c979eb987b2f1, type: 2}
 --- !u!114 &1598128075
 MonoBehaviour:
   m_ObjectHideFlags: 0

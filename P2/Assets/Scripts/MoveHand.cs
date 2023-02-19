@@ -56,6 +56,9 @@ public class MoveHand : MonoBehaviour
     [SerializeField]
     float volume;
 
+    [SerializeField]
+    GameObject pauseButton;
+
     private void Start()
     {
         detect_click_on_obj_event_sub = EventBus.Subscribe<DetectClickOnObjEvent>(_OnDetectClickOnObjEvent);
@@ -68,21 +71,21 @@ public class MoveHand : MonoBehaviour
         // detect clicks on screen not over obj
         if (Input.GetMouseButtonDown(0) && !isMoving)
         {
-            Debug.Log("handindex" + alternateIndex);
-          
+
             mousePos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
             // If click on something code should not ex
-           
             RaycastHit raycastHit;
             Ray ray = Camera.main.ScreenPointToRay(mousePos);
             if (Physics.Raycast(ray, out raycastHit, 300f))
-            {
-                Debug.Log("point to check 1");
-                Debug.Log(raycastHit.transform.tag);
+            { 
                 if (raycastHit.transform != null && !raycastHit.transform.CompareTag("Untagged" ))
                     return;
             }
-            Debug.Log("point to check 2");
+            Debug.Log("Distance" + Vector3.Distance(mousePos, pauseButton.transform.position));
+            // explicit check for click on pause button
+            if (Vector3.Distance(mousePos, pauseButton.transform.position) < 1000f)
+                return;
+
             // Alternate between hands
             if (alternateIndex > 0)
                 hand = left;
@@ -91,14 +94,15 @@ public class MoveHand : MonoBehaviour
 
             alternateIndex *= -1;
 
-            // set rock to null
+            // Set rock to null
             rock = null;
-            // calc pos to move towards
+            // Calc pos to move towards
             targPos = new Vector3(mousePos.x, mousePos.y, -1);
 
-            //check how far the reach is
+            // Check if reach is too far
             if (Vector3.Distance(head.transform.position, targPos) > maxReachDistance)
                 StartCoroutine(FailMove());
+
             else
                 StartCoroutine(Move());
         }
@@ -113,8 +117,7 @@ public class MoveHand : MonoBehaviour
 
         if (!isMoving)
         {
-
-            Debug.Log("handindex on rock" + alternateIndex);
+            // Set current valid rock tag
             validRockTag = "V" + PlayerInfo.Instance.Level.ToString();
 
             // Alternate between hands
@@ -124,6 +127,7 @@ public class MoveHand : MonoBehaviour
                 hand = right;
 
             alternateIndex *= -1;
+
             // Zero the z of target pos. 
             targPos = new Vector3(rock.transform.position.x, rock.transform.position.y, -1);
 
@@ -141,7 +145,7 @@ public class MoveHand : MonoBehaviour
     // Move Hand to mouse click position
     private IEnumerator Move()
     {
-        ;
+        // Turn off hands gravity
         rb = hand.GetComponent<Rigidbody>();
         rb.isKinematic = true;
         rb.useGravity = false;
@@ -186,6 +190,7 @@ public class MoveHand : MonoBehaviour
     // Move hand as close to mouse click osition as allowed
     private IEnumerator FailMove()
     {
+        // Turn off hands gravity
         rb = hand.GetComponent<Rigidbody>();
         rb.isKinematic = true;
         rb.useGravity = false;
@@ -251,7 +256,7 @@ public class MoveHand : MonoBehaviour
     // Turn on gracity to allow hand to fall. 
     private IEnumerator HandFall(float time)
     {
-       
+        // Turn on hands gravity for fall  
         rb = hand.GetComponent<Rigidbody>();
         rb.isKinematic = false;
         rb.useGravity = true;
