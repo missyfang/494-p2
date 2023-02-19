@@ -68,10 +68,9 @@ public class MoveHand : MonoBehaviour
         if (PlayerInfo.Instance.disableMovement == true)
             return;
 
-        // detect clicks on screen not over obj
+        // Detect clicks on screen not over obj
         if (Input.GetMouseButtonDown(0) && !isMoving)
         {
-
             mousePos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
             // If click on something code should not ex
             RaycastHit raycastHit;
@@ -81,11 +80,11 @@ public class MoveHand : MonoBehaviour
                 if (raycastHit.transform != null && !raycastHit.transform.CompareTag("Untagged" ))
                     return;
             }
-            Debug.Log("Distance" + Vector3.Distance(mousePos, pauseButton.transform.position));
 
-            // explicit check for click on pause button
-            //if (Vector3.Distance(mousePos, pauseButton.transform.position) < 1000f)
-            //    return;
+            // Explicit check for click on pause button for some reason
+            // Debug.Log("Distance" + Vector3.Distance(mousePos, Camera.main.ScreenToWorldPoint(pauseButton.transform.position)));
+            if (Vector3.Distance(mousePos, Camera.main.ScreenToWorldPoint(pauseButton.transform.position)) < 1.0f)
+                return;
 
             // Alternate between hands
             if (alternateIndex > 0)

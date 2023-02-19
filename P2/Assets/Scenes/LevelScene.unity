@@ -7881,7 +7881,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 1, g: 1, b: 1, a: 0.12941177}
+  m_Color: {r: 0, g: 0, b: 0, a: 0.56078434}
   m_RaycastTarget: 0
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -15284,8 +15284,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a1e1a8aa68a614bff840be6304b49988, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  source: {fileID: 963194232}
-  clip: {fileID: 8300000, guid: 5c1b0dc4d4d764c858e2494f8ca4222d, type: 3}
 --- !u!114 &1598128076
 MonoBehaviour:
   m_ObjectHideFlags: 0
