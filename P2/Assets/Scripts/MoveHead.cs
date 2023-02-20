@@ -15,7 +15,7 @@ public class MoveHead : MonoBehaviour
     GameObject leftHand;
 
     GameObject handToMoveTowards;
-    //bool isMoving = false;
+   
     Vector3 orgPos;
     Vector3 targPos;
     Vector3 direction;
@@ -32,8 +32,8 @@ public class MoveHead : MonoBehaviour
         handToMoveTowards = e.successfulHandGo;
         StartCoroutine(Move());
     }
+
     
-   
     // Why are we destroying? 
     private void OnDestroy()
     {
@@ -55,6 +55,7 @@ public class MoveHead : MonoBehaviour
             elapsedTime += Time.deltaTime;
             yield return null;
         }
+       
         Debug.Log(Vector3.Distance(transform.position, handToMoveTowards.transform.position));
 
     }
