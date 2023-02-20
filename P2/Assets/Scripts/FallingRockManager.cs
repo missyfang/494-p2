@@ -5,7 +5,10 @@ using UnityEngine;
 
 public class FallingRockManager : MonoBehaviour
 {
-    
+    [SerializeField]
+    AudioClip badGrabSfx;
+    [SerializeField]
+    AudioSource audioSource;
 
     [SerializeField]
     float speed = 1.0f;
@@ -29,6 +32,7 @@ public class FallingRockManager : MonoBehaviour
         // Do damage to player
         if (other.CompareTag("Player"))
         {
+            audioSource.PlayOneShot(badGrabSfx);
             EventBus.Publish<FallDamageEvent>(new FallDamageEvent());
             Debug.Log("hit player");
         }

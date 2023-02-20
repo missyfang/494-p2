@@ -33,15 +33,19 @@ public class ScoreUI : MonoBehaviour
     ParticleSystem blood;
 
     bool HasDied;
+    Vector3 notificationOrgPos;
 
     void Start()
     {
         HasDied = false;
         RestartGo.SetActive(false);
         HomeGo.SetActive(false);
+        notificationOrgPos = NotifcationGo.transform.position;
+
         score_event_subscription = EventBus.Subscribe<ScoreEvent>(_OnScoreUpdated);
         level_up_event_subscription = EventBus.Subscribe<PlayerNotificationEvent>(_OnLevelUp);
         player_hit_bottom_event_sub = EventBus.Subscribe<PlayerHitBottomEvent>(_OnPlayerHitBottomEvent);
+
 
         // Inital level notification
         // EventBus.Publish<PlayerNotificationEvent>(new PlayerNotificationEvent("V0", playerInfo);
@@ -101,12 +105,12 @@ public class ScoreUI : MonoBehaviour
         float elapsedTime = 0;
         Vector3 orgPos = NotifcationGo.transform.position;
         Debug.Log(orgPos);
-        Vector3 targPos = new Vector3(orgPos.x, orgPos.y - 115, orgPos.z);
+        Vector3 targPos = new Vector3(notificationOrgPos.x, notificationOrgPos.y - 115, notificationOrgPos.z);
 
         // Move Down
         while (elapsedTime < timeToMove)
         {
-            NotifcationGo.transform.position = Vector3.Lerp(orgPos, targPos, (elapsedTime / timeToMove));
+            NotifcationGo.transform.position = Vector3.Lerp(notificationOrgPos, targPos, (elapsedTime / timeToMove));
             elapsedTime += Time.deltaTime;
             yield return null;
         }
@@ -123,11 +127,11 @@ public class ScoreUI : MonoBehaviour
         elapsedTime = 0;
         while (elapsedTime < timeToMove)
         {
-            NotifcationGo.transform.position = Vector3.Lerp(targPos, orgPos, (elapsedTime / timeToMove));
+            NotifcationGo.transform.position = Vector3.Lerp(targPos, notificationOrgPos, (elapsedTime / timeToMove));
             elapsedTime += Time.deltaTime;
             yield return null;
         }
-        NotifcationGo.transform.position = orgPos;
+        NotifcationGo.transform.position = notificationOrgPos;
 
 
 
