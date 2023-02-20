@@ -9,9 +9,8 @@ public class StartCameraMovement : MonoBehaviour
 
     void OnTriggerEnter(Collider other)
     {
-        
-        EventBus.Publish<StartCameraMovementEvent>(new StartCameraMovementEvent(cameraSpeed));
-        Debug.Log("publised camer move");
+        if (other.CompareTag("Player"))
+            EventBus.Publish<StartCameraMovementEvent>(new StartCameraMovementEvent(cameraSpeed));
     }
 }
 

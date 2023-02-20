@@ -36,6 +36,7 @@ public class FallingRockManager : MonoBehaviour
         // Start falling effect
         if (other.CompareTag("FallThreshHold"))
         {
+            Debug.Log("hit fall trigger");
             orgPos = transform.position;
             StartCoroutine(ShakeAndFall());
         }
