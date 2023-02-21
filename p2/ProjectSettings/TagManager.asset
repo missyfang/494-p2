@@ -13,6 +13,11 @@ TagManager:
   - FallThreshHold
   - V3
   - UI
+  - V4
+  - V5
+  - V6
+  - V7
+  - V8
   layers:
   - Default
   - TransparentFX

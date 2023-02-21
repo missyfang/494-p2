@@ -244,7 +244,7 @@ public class MoveHand : MonoBehaviour
                 if (!NotifiedTooFar)
                 {
                     NotifiedTooFar = true;
-                    EventBus.Publish<PlayerNotificationEvent>(new PlayerNotificationEvent("Too far!", Color.black));
+                    EventBus.Publish<PlayerNotificationEvent>(new PlayerNotificationEvent("Too far!", new Color(0f,0f,0f,0.85f)));
                 }
             }
         }

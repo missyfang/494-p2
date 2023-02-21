@@ -6,7 +6,7 @@ public class PlayerInfo : MonoBehaviour
 { 
     public Dictionary<string, Color> LevelToColor = new Dictionary<string, Color>()
     {
-        {"V0", new Color(0f, 0.4431371f, 1.0f, 1.0f)},  {"V1", new Color(0f, 0.745283f, 0.1683396f, 1.0f)},  {"V2", new Color(1f, 0.3333333f, 0.9792358f, 1.0f)},  {"V3",  new Color(1f, 0.5583236f, 0f, 1.0f) }, {"V4",  new Color(1f, 0.8874891f, 0f, 1.0f) }
+        {"V0", new Color(0f, 0.4431371f, 1.0f, 0.85f)},  {"V1", new Color(0f, 0.745283f, 0.1683396f, 0.85f)},  {"V2", new Color(1f, 0.3333333f, 0.9792358f, 0.85f)},  {"V3",  new Color(1f, 0.5583236f, 0f, 0.85f) }, {"V4",  new Color(1f, 0.8874891f, 0f, 0.85f) }, {"V5",  new Color(0.5526668f, 0f, 0.9528301f, 0.85f) }
     };
   
 

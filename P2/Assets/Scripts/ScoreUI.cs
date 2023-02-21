@@ -105,7 +105,7 @@ public class ScoreUI : MonoBehaviour
         float elapsedTime = 0;
         Vector3 orgPos = NotifcationGo.transform.position;
         Debug.Log(orgPos);
-        Vector3 targPos = new Vector3(notificationOrgPos.x, notificationOrgPos.y - 115, notificationOrgPos.z);
+        Vector3 targPos = new Vector3(notificationOrgPos.x, notificationOrgPos.y - 125, notificationOrgPos.z);
 
         // Move Down
         while (elapsedTime < timeToMove)

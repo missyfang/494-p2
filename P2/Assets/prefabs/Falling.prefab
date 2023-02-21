@@ -127,6 +127,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8935c35149c254e2ca874c498a8255b8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  badGrabSfx: {fileID: 0}
+  audioSource: {fileID: 0}
   speed: 5
   xAmount: 0.5
   yAmount: 0
